@@ -14,10 +14,10 @@ int main()
     sf::RenderWindow window(sf::VideoMode(800, 600), "Gravity Simulation", sf::Style::Default, settings);
 
     std::vector<Particle> particles;
-    particles.push_back({200.0f, 250.0f, 10.0f, 20.0f, 0.0f, 0.0f, 0.0f, 0.0f});
-    particles.push_back({400.0f, 250.0f, 10.0f, 20.0f, 0.0f, 0.0f, 0.0f, 0.0f});
+    particles.push_back({200.0f, 250.0f, 50.0f, 20.0f, 0.0f, 0.0f, 0.0f, 0.0f});
+    particles.push_back({400.0f, 250.0f, 1000.0f, 20.0f, 0.0f, 0.0f, 0.0f, 0.0f});
 
-    int timeElapsed = 1;
+    sf::Clock clock;
 
     // Run the program as long as the window is open
     while (window.isOpen())
@@ -50,14 +50,16 @@ int main()
                 p0.ay += acceleration * (delta_y(p0, p1) / dist);
             }
 
+            float elapsed = clock.getElapsedTime().asSeconds() * 60;
+
             // Update position with velocity from last iteration (initial velocity) and acceleration
             // s = ut + (1/2)at^2
-            p0.x += p0.vx * timeElapsed + .5f * p0.ax * timeElapsed * timeElapsed;
-            p0.y += p0.vy * timeElapsed + .5f * p0.ay * timeElapsed * timeElapsed;
+            p0.x += p0.vx * elapsed + .5f * p0.ax * elapsed * elapsed;
+            p0.y += p0.vy * elapsed + .5f * p0.ay * elapsed * elapsed;
 
             // Update velocity of particle after moving it
-            p0.vx += p0.ax * timeElapsed;
-            p0.vy += p0.ay * timeElapsed;
+            p0.vx += p0.ax * elapsed;
+            p0.vy += p0.ay * elapsed;
 
             std::cout << p0.x << std::endl;
 
@@ -70,6 +72,9 @@ int main()
 
         // Draw current state of window
         window.display();
+
+        // Restart clock for next iteration
+        clock.restart();
     }
 
     return 0;

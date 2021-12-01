@@ -1,8 +1,6 @@
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
 
-struct
-
 int main()
 {
     // Create the window

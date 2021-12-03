@@ -1,11 +1,15 @@
 #pragma once
+
+#include <SFML/Graphics/CircleShape.hpp>
+
 struct Particle {
-    float x;
-    float y;
-    float m;
-    float r;
-    float ax;
-    float ay;
-    float vx;
-    float vy;
+    double x;
+    double y;
+    double m;
+    double r;
+    double ax;
+    double ay;
+    double vx;
+    double vy;
+    sf::CircleShape shape;
 };

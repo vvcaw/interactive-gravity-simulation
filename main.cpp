@@ -1,5 +1,6 @@
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
+#include <iostream>
 #include "Particle.h"
 #include "calculate.h"
 
@@ -39,9 +40,15 @@ int main()
         // Restart clock for next iteration here, then elapsed time in next iteration is correct
         double elapsed = clock.restart().asMilliseconds() / 1000.0;
 
-        for (auto& p0 : particles) {
+        std::cout << particles.size() << std::endl;
 
+        for (int i = 0; i < particles.size(); ++i) {
+            Particle& p0 = particles[i];
+
+            // Reset acceleration
             p0.ax = p0.ay = 0.0;
+
+            bool toBeDeleted = false;
 
             for (auto& p1 : particles) {
                 if (&p0 == &p1)
@@ -53,9 +60,18 @@ int main()
                 // F = m * a => a = F / m
                 double acceleration = force / p0.m;
 
+                if (dist < p1.r) {
+                    toBeDeleted = true;
+                }
+
                 // Update acceleration
                 p0.ax += acceleration * (delta_x(p0, p1) / dist);
                 p0.ay += acceleration * (delta_y(p0, p1) / dist);
+            }
+
+            if (toBeDeleted) {
+                particles.erase(particles.begin() + i);
+                continue;
             }
 
             // Update velocity

@@ -11,5 +11,6 @@ struct Particle {
     double ay;
     double vx;
     double vy;
+    bool isStatic;
     sf::CircleShape shape;
 };

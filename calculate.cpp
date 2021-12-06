@@ -2,7 +2,7 @@
 #include "Particle.h"
 
 // Custom gravitational constant
-#define G 1.0
+#define G 300.0
 
 double distance(Particle& src, Particle& dst) {
     return std::sqrt((dst.x + dst.r - src.x + src.r) * (dst.x + dst.r - src.x + src.r) + (dst.y + dst.r - src.y + src.r) * (dst.y + dst.r - src.y + src.r));

@@ -14,8 +14,9 @@ int main()
     sf::RenderWindow window(sf::VideoMode(600, 600), "Gravity Simulation", sf::Style::Default, settings);
 
     std::vector<Particle> particles;
-    particles.push_back({200.0, 100.0, 1.0, 5.0, 0.0, 0.0, 0.0, 0.0, sf::CircleShape(5.0)});
-    particles.push_back({400.0, 250.0, 1000000.0, 15.0, 0.0, 0.0, 0.0, 0.0, sf::CircleShape(15.0)});
+    particles.push_back({200.0, 100.0, 1.0, 5.0, 0.0, 0.0, 0.0, 0.0, false, sf::CircleShape(5.0)});
+    particles.push_back({370.0, 280.0, 10000.0, 15.0, 0.0, 0.0, 0.0, 0.0, true, sf::CircleShape(15.0)});
+    particles.push_back({250.0, 350.0, 10000.0, 15.0, 0.0, 0.0, 0.0, 0.0, true, sf::CircleShape(15.0)});
 
     window.setFramerateLimit(200.0f);
 
@@ -50,37 +51,41 @@ int main()
 
             bool toBeDeleted = false;
 
-            for (auto& p1 : particles) {
-                if (&p0 == &p1)
-                    continue;
+            // Don't evaluate force of self if static
+            if (!p0.isStatic) {
+                for (auto& p1 : particles) {
+                    // Don't evaluate force on self
+                    if (&p0 == &p1)
+                        continue;
 
-                double dist = distance(p0, p1);
-                double force = gravitational_force(p0, p1, dist);
+                    double dist = distance(p0, p1);
+                    double force = gravitational_force(p0, p1, dist);
 
-                // F = m * a => a = F / m
-                double acceleration = force / p0.m;
+                    // F = m * a => a = F / m
+                    double acceleration = force / p0.m;
 
-                if (dist < p1.r) {
-                    toBeDeleted = true;
+                    if (dist < p1.r) {
+                        toBeDeleted = true;
+                    }
+
+                    // Update acceleration
+                    p0.ax += acceleration * (delta_x(p0, p1) / dist);
+                    p0.ay += acceleration * (delta_y(p0, p1) / dist);
                 }
 
-                // Update acceleration
-                p0.ax += acceleration * (delta_x(p0, p1) / dist);
-                p0.ay += acceleration * (delta_y(p0, p1) / dist);
+                if (toBeDeleted) {
+                    particles.erase(particles.begin() + i);
+                    continue;
+                }
+
+                // Update velocity
+                p0.vx += p0.ax * elapsed;
+                p0.vy += p0.ay * elapsed;
+
+                // Update position based on velocity
+                p0.x += p0.vx * elapsed;
+                p0.y += p0.vy * elapsed;
             }
-
-            if (toBeDeleted) {
-                particles.erase(particles.begin() + i);
-                continue;
-            }
-
-            // Update velocity
-            p0.vx += p0.ax * elapsed;
-            p0.vy += p0.ay * elapsed;
-
-            // Update position based on velocity
-            p0.x += p0.vx * elapsed;
-            p0.y += p0.vy * elapsed;
 
             // Draw each individual particle
             p0.shape.setPosition((float) p0.x, (float) p0.y);

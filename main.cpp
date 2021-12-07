@@ -14,9 +14,8 @@ int main()
     sf::RenderWindow window(sf::VideoMode(600, 600), "Gravity Simulation", sf::Style::Default, settings);
 
     std::vector<Particle> particles;
-    particles.push_back({200.0, 100.0, 1.0, 5.0, 0.0, 0.0, 0.0, 0.0, false, sf::CircleShape(5.0)});
-    particles.push_back({370.0, 280.0, 10000.0, 15.0, 0.0, 0.0, 0.0, 0.0, true, sf::CircleShape(15.0)});
-    particles.push_back({250.0, 350.0, 10000.0, 15.0, 0.0, 0.0, 0.0, 0.0, true, sf::CircleShape(15.0)});
+    // particles.push_back({(float) 200, (float) 300, 1400.0, 15.0, 0.0, 0.0, 30.0, 30.0, false, sf::CircleShape(15.0)});
+    // particles.push_back({(float) 400, (float) 300, 1400.0, 15.0, 0.0, 0.0, -30.0, -30.0, true, sf::CircleShape(15.0)});
 
     window.setFramerateLimit(200.0f);
 
@@ -33,6 +32,19 @@ int main()
             // Close window when requested
             if (event.type == sf::Event::Closed)
                 window.close();
+
+            // Mouse button was pressed
+            if (event.type == sf::Event::MouseButtonPressed) {
+                // Create new moving particle
+                if (event.mouseButton.button == sf::Mouse::Button::Left) {
+                    particles.push_back({(float) event.mouseButton.x, (float) event.mouseButton.y, 10.0, 5.0, 0.0, 0.0, 0.0, 0.0, false, sf::CircleShape(5.0)});
+                }
+
+                // Create new static particle
+                if (event.mouseButton.button == sf::Mouse::Button::Right) {
+                    particles.push_back({(float) event.mouseButton.x, (float) event.mouseButton.y, 7000.0, 15.0, 0.0, 0.0, 0.0, 0.0, true, sf::CircleShape(15.0)});
+                }
+            }
         }
 
         // Clear window
@@ -40,8 +52,6 @@ int main()
 
         // Restart clock for next iteration here, then elapsed time in next iteration is correct
         double elapsed = clock.restart().asMilliseconds() / 1000.0;
-
-        std::cout << particles.size() << std::endl;
 
         for (int i = 0; i < particles.size(); ++i) {
             Particle& p0 = particles[i];
@@ -64,7 +74,7 @@ int main()
                     // F = m * a => a = F / m
                     double acceleration = force / p0.m;
 
-                    if (dist < p1.r) {
+                    if (dist < p0.r) {
                         toBeDeleted = true;
                     }
 
